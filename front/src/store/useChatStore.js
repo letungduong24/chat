@@ -3,6 +3,7 @@ import { configuredAxios } from '../lib/axios'
 import { toast } from 'sonner'
 import { useAuthStore } from './useAuthStore'
 
+
 export const useChatStore = create((set, get) => ({
     users: [],
     selectedUser: null,

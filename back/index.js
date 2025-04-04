@@ -19,16 +19,23 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(express.json());
 app.use(cors({
-    origin: ['https://chatdeefrontend.vercel.app'],
+    origin: process.env.ORIGIN_URL,
     credentials: true
 }))
 
 app.use('/api/auth', authRoutes)
 app.use('/api/message', messageRoutes)
 
+if(process.env.NODE_ENV === 'production'){
+    app.use(express.static(path.join(__dirname, '../front/dist')))
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '../front', 'dist', 'index.html'))
+    })
+}
+
 server.listen(port, () => {
-    console.log(process.env.ORIGIN_URL)
     console.log('server is running')
     connectDB()
 })

@@ -3,6 +3,7 @@ import { configuredAxios } from '../lib/axios'
 import { toast } from 'sonner'
 import {io} from 'socket.io-client'
 
+const BASE_URL = import.meta.env.MODE === "development" ? 'http://localhost:9000' : '/'
 
 export const useAuthStore = create((set, get) => ({
     user: null,
@@ -130,7 +131,7 @@ export const useAuthStore = create((set, get) => ({
         const {user} = get()
         if(!user || get().socket?.connected) return
 
-        const socket = io(import.meta.env.VITE_SERVER_URL, {
+        const socket = io(BASE_URL, {
             query: {
                 userId: user._id
             }
