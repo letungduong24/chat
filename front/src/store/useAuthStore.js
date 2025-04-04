@@ -29,7 +29,7 @@ export const useAuthStore = create((set, get) => ({
     },
 
     login: async (data) => {
-        set({isLogginging: true})
+        set({isLogging: true})
         try {
             const res = await configuredAxios.post(
                 '/auth/login', data
@@ -39,7 +39,7 @@ export const useAuthStore = create((set, get) => ({
         } catch (error) {
             throw new Error(error.response.data.message)
         } finally{
-            set({isLogginging: false})
+            set({isLogging: false})
         }
     },
 
