@@ -6,9 +6,10 @@ import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../store/useAuthStore.js';
 
+import MiniLoading from '../../Common/MiniLoading.jsx'
+
 const SignUp = () => {
   const {signup, isRegistering} = useAuthStore()
-  const dispatch = useDispatch()
   const navigate = useNavigate()
 
   const [isShowPassword, setIsShowPassword] = useState(false)
@@ -57,7 +58,9 @@ const SignUp = () => {
           <input name='password' value={formData.password} onChange={(e) => handleFormChange(e)} type={isShowPassword ? "text" : "password"} placeholder="Bí mật" />
           <button type='button' onClick={() => setIsShowPassword(!isShowPassword)}>{isShowPassword ? <FaEyeSlash /> : <FaRegEye />}</button>
         </label>
-        <button type='submit' className="btn btn-outline w-full text-gray-300">Đăng ký</button>
+        {isRegistering ? <MiniLoading /> : (
+          <button type='submit' className="btn btn-outline w-full text-gray-300">Đăng ký</button>
+        )}
         <p className='text-sm text-center mt-4'>Đã có tài khoản? <Link className='text-blue-400 underline' to={'/login'}>Đăng nhập</Link></p>
       </form>
     </div>
