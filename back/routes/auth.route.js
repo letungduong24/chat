@@ -41,7 +41,7 @@ router.post('/signup', async (req, res) => {
         if(newUser){
             generateToken(newUser._id, res)
             await newUser.save()
-            res.status(201).json({
+            return res.status(201).json({
                 _id: newUser._id,
                 fullName: newUser.fullName,
                 email: newUser.email,
@@ -69,7 +69,7 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({message: "Thông tin không hợp lệ."})
         }
         generateToken(user._id, res)
-        res.status(201).json({
+        return res.status(201).json({
             _id: user._id,
             email: user.email,
             fullName: user.fullName,
