@@ -6,5 +6,5 @@ front/.env
 back/.env
 
 .gitignore
-.package.json
+package.json
 
