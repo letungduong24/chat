@@ -11,13 +11,13 @@ router.get('/', protect,  async (req, res) => {
     try {
         const user = await User.findById(req.user._id).select('-password').populate("story")
         if(!user){
-            return res.status(404).json({message: "Không tìm thấy người dùng"})
+            res.status(404).json({message: "Không tìm thấy người dùng"})
         } 
-        return res.status(200).json(user)
+        res.status(200).json(user)
 
     } catch (error) {
         console.log("Lỗi", error.message)
-        return res.status(500).json({message: "Lỗi server."})
+        res.status(500).json({message: "Lỗi server."})
     }
 })
 
@@ -26,10 +26,10 @@ router.post('/signup', async (req, res) => {
     const {fullName, email, password} = req.body
     try {
         if(password.length < 6){
-            return res.status(400).json({message: "Mật khẩu phải có tối thiểu 6 ký tự."})
+            res.status(400).json({message: "Mật khẩu phải có tối thiểu 6 ký tự."})
         }
         const user = await User.findOne({email})
-        if (user) return res.status(400).json({message: "Email đã tồn tại."})
+        if (user) res.status(400).json({message: "Email đã tồn tại."})
 
         const salt = await bcrypt.genSalt(4)
         const hashedPassword = await bcrypt.hash(password, salt)
@@ -41,19 +41,19 @@ router.post('/signup', async (req, res) => {
         if(newUser){
             generateToken(newUser._id, res)
             await newUser.save()
-            return res.status(201).json({
+            res.status(201).json({
                 _id: newUser._id,
                 fullName: newUser.fullName,
                 email: newUser.email,
                 profilePic: newUser.profilePic
             })
         } else {
-            return res.status(400).json({message: "Thông tin không hợp lệ."})
+            res.status(400).json({message: "Thông tin không hợp lệ."})
         }
 
     } catch (error) {
         console.log("Lỗi", error.message)
-        return res.status(500).json({message: "Lỗi server."})
+        res.status(500).json({message: "Lỗi server."})
     }
 })
 
@@ -62,14 +62,14 @@ router.post('/login', async (req, res) => {
     const {email, password} = req.body
     try {
         const user = await User.findOne({email})
-        if (!user) return res.status(401).json({message: "Thông tin không hợp lệ."})
+        if (!user) res.status(401).json({message: "Thông tin không hợp lệ."})
 
         const isPasswordCorrect = await bcrypt.compare(password, user.password)
         if(!isPasswordCorrect){
-            return res.status(401).json({message: "Thông tin không hợp lệ."})
+            res.status(401).json({message: "Thông tin không hợp lệ."})
         }
         generateToken(user._id, res)
-        return res.status(201).json({
+        res.status(201).json({
             _id: user._id,
             email: user.email,
             fullName: user.fullName,
@@ -83,7 +83,7 @@ router.post('/login', async (req, res) => {
         })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({message: "Lỗi server."})
+        res.status(500).json({message: "Lỗi server."})
     }
 })
 
@@ -94,7 +94,7 @@ router.post('/logout', (req, res) => {
         res.status(200).json({message: "Đăng xuất thành công."})
     } catch (error) {
         console.log("Lỗi", error.message)
-        return res.status(500).json({message: "Lỗi server."})
+        res.status(500).json({message: "Lỗi server."})
     }
 })
 
