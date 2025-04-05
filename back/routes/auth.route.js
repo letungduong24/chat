@@ -31,7 +31,7 @@ router.post('/signup', async (req, res) => {
         const user = await User.findOne({email})
         if (user) return res.status(400).json({message: "Email đã tồn tại."})
 
-        const salt = await bcrypt.genSalt(10)
+        const salt = await bcrypt.genSalt(4)
         const hashedPassword = await bcrypt.hash(password, salt)
 
         const newUser = new User({
@@ -152,7 +152,7 @@ router.put('/update-user', protect, async (req, res) => {
         }
 
         if (password) {
-            const salt = await bcrypt.genSalt(10);
+            const salt = await bcrypt.genSalt(4);
             user.password = await bcrypt.hash(password, salt);
         }
 
