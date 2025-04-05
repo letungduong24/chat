@@ -23,53 +23,60 @@ router.get('/', protect,  async (req, res) => {
 
 // sign up
 router.post('/signup', async (req, res) => {
-    const {fullName, email, password} = req.body
+    const { fullName, email, password } = req.body;
     try {
-        if(password.length < 6){
-            return res.status(400).json({message: "Mật khẩu phải có tối thiểu 6 ký tự."})
+        if (!password || password.length < 6) {
+            return res.status(400).json({ message: "Mật khẩu phải có tối thiểu 6 ký tự." });
         }
-        const user = await User.findOne({email})
-        if (user) return res.status(400).json({message: "Email đã tồn tại."})
 
-        const salt = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(password, salt)
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+            return res.status(400).json({ message: "Email đã tồn tại." });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         const newUser = new User({
-            fullName, email, password: hashedPassword
-        })
+            fullName,
+            email,
+            password: hashedPassword,
+        });
 
-        if(newUser){
-            generateToken(newUser._id, res)
-            await newUser.save()
-            return res.status(201).json({
-                _id: newUser._id,
-                fullName: newUser.fullName,
-                email: newUser.email,
-                profilePic: newUser.profilePic
-            })
-        } else {
-            return res.status(400).json({message: "Thông tin không hợp lệ."})
-        }
+        await newUser.save();
 
+        generateToken(newUser._id, res); 
+
+        return res.status(201).json({
+            _id: newUser._id,
+            fullName: newUser.fullName,
+            email: newUser.email,
+            profilePic: newUser.profilePic,
+        });
     } catch (error) {
-        console.log("Lỗi", error.message)
-        return res.status(500).json({message: "Lỗi server."})
+        console.error("Lỗi server khi signup:", error);
+        return res.status(500).json({ message: "Lỗi server." });
     }
-})
+});
+
 
 // sign in
 router.post('/login', async (req, res) => {
-    const {email, password} = req.body
+    const { email, password } = req.body;
     try {
-        const user = await User.findOne({email}).populate('story')
-        if (!user) return res.status(401).json({message: "Thông tin không hợp lệ."})
-
-        const isPasswordCorrect = await bcrypt.compare(password, user.password)
-        if(!isPasswordCorrect){
-            return res.status(401).json({message: "Thông tin không hợp lệ."})
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ message: "Thông tin không hợp lệ." });
         }
-        generateToken(user._id, res)
-        return res.status(201).json({
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Thông tin không hợp lệ." });
+        }
+
+        generateToken(user._id, res); // set cookie
+
+        return res.status(200).json({
             _id: user._id,
             email: user.email,
             fullName: user.fullName,
@@ -79,13 +86,14 @@ router.post('/login', async (req, res) => {
             isShowSeen: user.isShowSeen,
             isShowActive: user.isShowActive,
             profilePic: user.profilePic,
-            createdAt: user.createdAt
-        })
+            createdAt: user.createdAt,
+        });
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({message: "Lỗi server."})
+        console.error("Lỗi server khi login:", error);
+        return res.status(500).json({ message: "Lỗi server." });
     }
-})
+});
+
 
 // logout
 router.post('/logout', (req, res) => {
