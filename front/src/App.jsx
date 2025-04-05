@@ -13,6 +13,8 @@ import UserRoute from './components/layouts/UserRoute.jsx'
 import GuestRoute from './components/layouts/GuestRoute.jsx'
 
 function  App() {
+  console.log('requested', import.meta.env.VITE_BACKEND_URL)
+  console.log('connected socket', import.meta.env.VITE_SERVER_URL)
   return (
     <PhotoProvider>
       <Toaster position='bottom-right'/>
