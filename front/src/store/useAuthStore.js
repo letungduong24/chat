@@ -1,6 +1,5 @@
 import {create} from 'zustand'
 import { configuredAxios } from '../lib/axios'
-import { toast } from 'sonner'
 import {io} from 'socket.io-client'
 
 export const useAuthStore = create((set, get) => ({

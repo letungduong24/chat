@@ -7,12 +7,4 @@ export default defineConfig({
   optimizeDeps: {
     include: ['sonner'],
   },
-  server: {
-    proxy: {
-      '/api': {
-        target: 'https://chatdeeback.vercel.app/', 
-        changeOrigin: true,
-      },
-    },
-  },
 })
