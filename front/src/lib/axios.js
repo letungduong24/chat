@@ -1,6 +1,6 @@
 import axios from 'axios'
 
 export const configuredAxios = axios.create({
-    baseURL: import.meta.env.VITE_BACKEND_URL, 
+    baseURL: import.meta.env.MODE === 'development' ? 'http://localhost:9000/api' : '/api',
     withCredentials: true,
 })
